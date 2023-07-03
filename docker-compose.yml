@@ -1,0 +1,30 @@
+version: '2.4'
+services:
+    db:
+        container_name: mysql_planetScale
+        image: mysql:latest
+        restart: always
+        environment:
+            - dbName=DB_NAME
+            - dbHost=DB_HOST
+            - dbPort=DB_PORT
+            - dbUser=DB_USER
+            - dbPass=DB_PASSWORD
+        ports:
+            - '5435:5435'
+        volumes:
+            - db:/var/lib/mysql/data
+
+    app:
+        restart: on-failure
+        build: .
+        environment:
+            - PORT=PORT
+        volumes:
+            - ${PWD}/host-directory:/container-directory
+            - /app/node_modules
+        image: e-aid-application-live-project
+        depends_on:
+            - db
+        ports:
+            - '5000:5000'
